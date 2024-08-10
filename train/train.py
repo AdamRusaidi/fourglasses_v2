@@ -4,7 +4,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn import svm
 
-df = pd.read_csv('/app/data/preprocessed_data.csv')
+df = pd.read_csv('../app/data/preprocessed_data.csv')
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -40,12 +40,12 @@ def train():
     test_accuracy = (y_test_pred == y_test).sum() / len(y_test)
     print("The model has an accuracy of {:.4}% on the TEST data.".format(test_accuracy * 100))
     # Save RandomForestClassifer model into save directory
-    with open('/app/data/model.pkl', 'wb') as f:
+    with open('../app/data/model.pkl', 'wb') as f:
         pickle.dump(SVM_model, f)
 
 def validation():
     # Load the model from the file
-    with open('/app/data/model.pkl', 'rb') as f:
+    with open('../app/data/model.pkl', 'rb') as f:
         loaded_model = pickle.load(f)
         
     y_val_pred = loaded_model.predict(X_val)
