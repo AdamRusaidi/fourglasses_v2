@@ -31,5 +31,5 @@ def prepare_data():
     # Dataset to be used for inference part
     df_reduced_model.to_csv('/app/data/preprocessed_data.csv')
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     prepare_data()
