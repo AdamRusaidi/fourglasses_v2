@@ -29,7 +29,7 @@ def prepare_data():
     # make the variable y as the label feature
     df_reduced_model.loc[:, "label"] = y
     # Dataset to be used for inference part
-    df_reduced_model.to_csv('/app/data/preprocessed_data.csv', index=False)
+    df_reduced_model.to_csv('/app/data/preprocessed_data.csv')
 
 if _name_ == "_main_":
     prepare_data()
