@@ -34,11 +34,10 @@ X_test, X_val, y_test, y_val = train_test_split(
 )
 
 # Assuming X_val is a DataFrame or a NumPy array
-if isinstance(X_val, np.ndarray):
+if not isinstance(X_val, pd.DataFrame):
     X_val = pd.DataFrame(X_val)
 
-# Assuming y_val is a Series or a NumPy array
-if isinstance(y_val, np.ndarray):
+if not isinstance(y_val, pd.Series):
     y_val = pd.Series(y_val, name='label')
 
 # Concatenate X_val and y_val along the columns

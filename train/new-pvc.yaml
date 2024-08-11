@@ -1,0 +1,12 @@
+# train pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: train-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: train-vol
+  resources:
+    requests:
+      storage: 1Gi  # Adjust storage size as needed
