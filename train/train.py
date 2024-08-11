@@ -11,7 +11,6 @@ app = Flask(__name__)
 # Define directory to save model (EDIT THIS PLEASE)
 save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
 model_path = os.path.join(save_dir, 'model.pkl')
-predictions_path = os.path.join(save_dir, 'validation_predictions.csv')
 
 # Load dataset
 df_reduced_model = pd.read_csv('/app_data/preprocessed_data.csv')
@@ -37,7 +36,7 @@ X_test, X_val, y_test, y_val = train_test_split(
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/app_data/validation_data.csv')
+val_data.to_csv('/fourglasses/app_data/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -57,30 +56,6 @@ def train():
     """Endpoint to train the model."""
     train_model(X_train, y_train, model_path)
     return jsonify({"message": "Model trained and saved!"})
-
-@app.route('/predict', methods=['POST'])
-def predict_validation():
-    """Endpoint to predict on validation set and save predictions."""
-    y_val_pred = predict(model_path, X_val)
-
-    # Reverse mapping to decode the predictions and original validation values
-    reverse_mapping = {2: 'POSITIVE', 1: 'NEUTRAL', 0: 'NEGATIVE'}
-    y_val_pred_decoded = [reverse_mapping[label] for label in y_val_pred]
-    y_val_decoded = [reverse_mapping[label] for label in y_val]
-
-    valid_accuracy = (y_val_pred == y_val).sum() / len(y_val)
-    predictions_df = pd.DataFrame({
-        'True Label': y_val_decoded,
-        'Predicted Label': y_val_pred_decoded
-    })
-
-    #Saving validation predictions
-    predictions_df.to_csv(predictions_path, index=False)
-
-    return jsonify({
-        "message": "Validation predictions made and saved!",
-        "validation_accuracy": valid_accuracy
-    })
 
 @app.route('/test-predict', methods=['POST'])
 def test_predict():
