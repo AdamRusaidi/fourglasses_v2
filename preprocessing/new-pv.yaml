@@ -1,11 +1,14 @@
+# pv.yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: raw-data-pv
+  labels:
+    type: raw-data-storage
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/raw_data" 
+    path: "/raw_data"
