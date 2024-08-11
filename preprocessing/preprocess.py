@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from flask import Flask, jsonify
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 
 app = Flask(__name__)
 
@@ -21,17 +21,31 @@ def preprocess():
     to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > 0.8)]
     df = df.drop(columns=to_drop)
 
-    # Feature selection with RandomForest
-    X = df.drop(columns="label")
-    y = df["label"]
-    clf = RandomForestClassifier()
-    clf.fit(X, y)
-    feature_importance = clf.feature_importances_
-    selected_features = X.columns[feature_importance > 0.0148]
+    # Train a model and use its feature importance to select the most informative features.
+    X = df.drop(columns=['label'])
+    y = df['label']
 
-    # Reduced dataset
-    df_reduced_model = df[selected_features].copy()
-    df_reduced_model["label"] = y
+    # Train the model
+    xgb = XGBClassifier()
+    xgb.fit(X, y)
+
+    # Get feature importances
+    feature_importance = xgb.feature_importances_
+
+    # Create a DataFrame to hold feature names and their importance
+    importance_df = pd.DataFrame({
+        'Feature': X.columns,
+        'Importance': feature_importance
+    })
+
+    # Sort the features by importance in descending order
+    importance_df = importance_df.sort_values(by='Importance', ascending=False)
+
+    # Select features with importance above 0.01
+    selected_features = importance_df[importance_df['Importance'] > 0.01]['Feature'].tolist()
+
+    # Create a new DataFrame with the selected features
+    df_reduced_model = df[selected_features + ['label']]
 
     # Ensure the directory exists
     os.makedirs('../app_data', exist_ok=True)
@@ -41,6 +55,15 @@ def preprocess():
 
     return jsonify({"message": "Preprocessing complete, data saved to ../app_data/preprocessed_data.csv"})
 
+    selected_features_str = ', '.join(selected_features)
+
+    selected_features_amt = len(selected_features)
+
+    return jsonify({
+        "message": "These are the selected features based on importance > 0.01",
+        "select_features_amt": selected_features_amt,
+        "selected_features": selected_features_str
+    })
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
