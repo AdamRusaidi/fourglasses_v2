@@ -33,6 +33,14 @@ X_test, X_val, y_test, y_val = train_test_split(
     stratify=y_temp
 )
 
+# Assuming X_val is a DataFrame or a NumPy array
+if isinstance(X_val, np.ndarray):
+    X_val = pd.DataFrame(X_val)
+
+# Assuming y_val is a Series or a NumPy array
+if isinstance(y_val, np.ndarray):
+    y_val = pd.Series(y_val, name='label')
+
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
