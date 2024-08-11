@@ -37,7 +37,7 @@ X_test, X_val, y_test, y_val = train_test_split(
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/app_data/validation_data.csv', index=False)
+val_data.to_csv('/app_data/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
