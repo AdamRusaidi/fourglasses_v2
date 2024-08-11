@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: preprocess-container
-        image: preprocess:latest # Ensure this matches your Docker Hub image
+        image: adamrusai/preprocess:latest # Ensure this matches your Docker Hub image
         ports:
         - containerPort: 5000
         volumeMounts:
