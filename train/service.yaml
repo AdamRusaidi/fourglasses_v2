@@ -1,0 +1,13 @@
+# train service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: train-service
+spec:
+  selector:
+    app: train
+  ports:
+    - protocol: TCP
+      port: 80  # Port exposed externally
+      targetPort: 5000  # Port Flask app is running on
+  type: LoadBalancer  # Type of service (use NodePort if no LoadBalancer available)
