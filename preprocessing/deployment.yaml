@@ -1,0 +1,33 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preprocess-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: preprocess
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: preprocess
+    spec:
+      containers:
+      - name: preprocess-container
+        image: fourglasses # Ensure this matches your Docker Hub image
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: raw-data-storage
+          mountPath: /raw_data
+      volumes:
+      - name: raw-data-storage
+        persistentVolumeClaim:
+          claimName: raw-data-pvc
+      restartPolicy: Always
