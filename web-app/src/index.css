@@ -24,3 +24,15 @@ h3.text-info {
   font-size: 2em;
   margin-top: 20px;
 }
+
+.positive {
+  color: green;
+}
+
+.neutral {
+  color: blue;
+}
+
+.negative {
+  color: red;
+}

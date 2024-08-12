@@ -51,23 +51,44 @@ function PredictionApp() {
     clearInterval(intervalId); // Clear the interval on reset
   };
 
+  // Function to determine the class based on prediction
+  const getPredictionClass = (prediction) => {
+    if (prediction === 'POSITIVE') return 'positive';
+    if (prediction === 'NEUTRAL') return 'neutral';
+    if (prediction === 'NEGATIVE') return 'negative';
+    return ''; // Default class
+  };
+
   return (
     <div className="container my-5">
       <div className="card p-4 shadow">
         <h1 className="text-center mb-4">Emotion Prediction</h1>
         <div className="d-flex justify-content-center mb-4">
-        <button className="btn btn-primary mx-2" onClick={startPrediction} disabled={isRunning}>
-            <i className="fas fa-play"></i> Start
-        </button>
-        <button className="btn btn-warning mx-2" onClick={pausePrediction} disabled={!isRunning}>
-            <i className="fas fa-pause"></i> Pause
-        </button>
-        <button className="btn btn-danger mx-2" onClick={resetPrediction}>
-            <i className="fas fa-redo"></i> Reset
-        </button>
+          <button 
+            className="btn btn-primary mx-2" 
+            onClick={startPrediction} 
+            disabled={isRunning}
+          >
+            Start
+          </button>
+          <button 
+            className="btn btn-warning mx-2" 
+            onClick={pausePrediction} 
+            disabled={!isRunning}
+          >
+            Pause
+          </button>
+          <button 
+            className="btn btn-danger mx-2" 
+            onClick={resetPrediction}
+          >
+            Reset
+          </button>
         </div>
         <h2 className="text-center">Predictions:</h2>
-        <h3 className="text-center text-info">{currentPrediction}</h3>
+        <h3 className={`text-center ${getPredictionClass(currentPrediction)}`}>
+          {currentPrediction}
+        </h3>
       </div>
     </div>
   );
