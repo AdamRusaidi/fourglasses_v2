@@ -5,7 +5,7 @@ import pandas as pd
 # Define directories for model and data
 save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
 model_path = os.path.join(save_dir, 'model.pkl')
-new_data_path = os.path.join(save_dir, 'validation_predictions.csv')
+new_data_path = os.path.join(save_dir, 'validation_data.csv')
 predictions_path = os.path.join(save_dir, 'prediction_outputs.csv')
 
 def load_model(model_path):
