@@ -13,7 +13,7 @@ save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
 model_path = os.path.join(save_dir, 'model.pkl')
 
 # Load dataset
-df_reduced_model = pd.read_csv('/app_data/preprocessed_data.csv')
+df_reduced_model = pd.read_csv('/mnt/data/preprocessed_data.csv')
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
