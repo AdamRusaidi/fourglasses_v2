@@ -24,10 +24,10 @@ spec:
         ports:
         - containerPort: 5000
         volumeMounts:
-        - name: raw-data-storage
-          mountPath: /raw_data
+        - name: shared-storage
+          mountPath: /mnt/data
       volumes:
-      - name: raw-data-storage
+      - name: shared-storage
         persistentVolumeClaim:
-          claimName: raw-data-pvc
+          claimName: shared-pvc
       restartPolicy: Always
