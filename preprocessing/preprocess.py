@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route('/preprocess', methods=['POST'])
 def preprocess():
     # Load data from the raw_data folder
-    df = pd.read_csv("/mnt/data/emotions.csv")
+    df = pd.read_csv("/data/emotions.csv")
 
     # Preprocess data
     df = df.dropna()
@@ -48,10 +48,10 @@ def preprocess():
     df_reduced_model = df[selected_features + ['label']]
 
     # Ensure the directory exists
-    os.makedirs('/mnt/data', exist_ok=True)
+    os.makedirs('/data', exist_ok=True)
 
     # Save preprocessed data
-    df_reduced_model.to_csv('/mnt/data/preprocessed_data.csv')
+    df_reduced_model.to_csv('/data/preprocessed_data.csv')
 
     return jsonify({"message": "Preprocessing complete, data saved to ./app_data/preprocessed_data.csv"})
 

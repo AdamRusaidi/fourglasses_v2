@@ -1,0 +1,35 @@
+# train_deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: train-deployment
+spec:
+  replicas: 3  # Number of replicas (adjust as needed)
+  selector:
+    matchLabels:
+      app: train
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: train
+    spec:
+      containers:
+      - name: train-container
+        image: adamrusai/train:latest  # Replace with your Docker image
+        ports:
+        - containerPort: 5000  # Port your Flask app is running on
+        # env:
+        # - name: SAVE_DIR
+        #   value: /app_data  # Adjust as needed for your app
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /data
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-pvc 

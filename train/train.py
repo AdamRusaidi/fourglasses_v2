@@ -9,11 +9,11 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Define directory to save model (EDIT THIS PLEASE)
-save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = os.path.join(save_dir, 'model.pkl')
+#save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
+model_path = "/data/model.pkl"#os.path.join(save_dir, 'model.pkl')
 
 # Load dataset
-df_reduced_model = pd.read_csv('/app_data/preprocessed_data.csv')
+df_reduced_model = pd.read_csv('/data/preprocessed_data.csv')
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -43,7 +43,7 @@ if not isinstance(y_val, pd.Series):
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/fourglasses/app_data/validation_data.csv')
+val_data.to_csv('/data/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -82,4 +82,6 @@ def test_predict():
     })
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    train()
+    test_predict()
+    # app.run(host='0.0.0.0', port=5000)
