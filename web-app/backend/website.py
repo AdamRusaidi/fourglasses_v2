@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
 # Define the absolute path to the CSV file
-csv_path = os.path.join(os.getenv("SAVE_DIR", "./app_data"), 'validation_predictions.csv')
+csv_path = os.path.join(os.getenv("SAVE_DIR", "./app_data"), 'prediction_outputs.csv')
 
 @app.route('/predictions', methods=['GET'])
 def get_predictions():
