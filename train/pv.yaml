@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: train-pv
+  name: train-vol
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/app_data" 
+    path: "/mnt/app_data/train-vol" 
   persistentVolumeReclaimPolicy: Retain
