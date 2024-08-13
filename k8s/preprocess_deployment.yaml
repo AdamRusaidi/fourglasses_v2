@@ -24,11 +24,11 @@ spec:
         ports:
         - containerPort: 5000
         volumeMounts:
-        - name: shared-pv
-          mountPath: "/mnt/app/data"
+        - name: raw-pv
+          mountPath: "/mnt/dataset"
         env:
         - name: PROCESSED_DIR
-          value: '/app/dataset'
+          value: '/app/preprocess_dataset'
         resources:
           requests:
             memory: "1Gi"
@@ -37,7 +37,7 @@ spec:
             memory: "2Gi"
             cpu: "1"
       volumes:
-      - name: shared-pv
+      - name: raw-pv
         persistentVolumeClaim:
-          claimName: shared-pvc
+          claimName: raw-pvc
       restartPolicy: Always

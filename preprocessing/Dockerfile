@@ -5,8 +5,11 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . .
-COPY ../data/emotions.csv /app/dataset/
+COPY data /mnt/dataset
+COPY . /app
+# COPY . .
+# COPY ../data/emotions.csv /app/dataset/
+
 # COPY preprocessing/preprocess.py /app/
 # COPY data/emotions.csv /data/
 # COPY preprocessing/preprocess_requirements.txt /app/
@@ -22,4 +25,4 @@ RUN pip install --no-cache-dir -r preprocessing/preprocess_requirements.txt
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "/app/preprocessing/preprocess.py"]
+CMD ["python", "preprocess.py"]

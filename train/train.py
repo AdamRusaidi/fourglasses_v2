@@ -7,7 +7,7 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 from flask import Flask, request, jsonify
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
 # Define directory to save model (EDIT THIS PLEASE)
 #save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
@@ -87,4 +87,4 @@ def test_predict():
 if __name__ == "__main__":
     train()
     test_predict()
-    # app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)

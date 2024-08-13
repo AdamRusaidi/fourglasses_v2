@@ -7,7 +7,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY --from=preprocess-stage /app/dataset /app/processed_train
+COPY --from=preprocess-stage /app/preprocess_dataset /app/processed_train
 COPY . /app
 # COPY /app/data/preprocessed_data.csv /app/data/
 # COPY train/train.py /app/
@@ -21,4 +21,4 @@ RUN pip install --no-cache-dir -r train/train_requirements.txt
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "/app/train/train.py"]
+CMD ["python", "train.py"]
