@@ -1,4 +1,58 @@
-# preprocess_deployment.yaml
+# # preprocess_deployment.yaml
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: preprocess-deployment
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: preprocess-deployment
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxUnavailable: 1
+#       maxSurge: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: preprocess-deployment
+#     spec:
+#       containers:
+#       - name: preprocess-deployment
+#         image: adamrusai/preprocess:latest # Ensure this matches your Docker Hub image
+#         ports:
+#         - containerPort: 5000
+#         volumeMounts:
+#         - name: shared-pv
+#           mountPath: /mnt/data
+#         env:
+#         - name: AWS_ACCESS_KEY_ID
+#           valueFrom:
+#             secretKeyRef:
+#               name: aws-secret
+#               key: AWS_ACCESS_KEY_ID
+#         - name: AWS_SECRET_ACCESS_KEY
+#           valueFrom:
+#             secretKeyRef:
+#               name: aws-secret
+#               key: AWS_SECRET_ACCESS_KEY
+#         - name: S3_BUCKET
+#           value: "my-emotions-data-bucket"
+#         resources:
+#           requests:
+#             memory: "1Gi"
+#             cpu: "500m"
+#           limits:
+#             memory: "2Gi"
+#             cpu: "1"
+#       volumes:
+#       - name: shared-pv
+#         persistentVolumeClaim:
+#           claimName: shared-pvc
+#       restartPolicy: Always
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7,7 +61,7 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: preprocess
+      app: preprocess-deployment
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,28 +70,31 @@ spec:
   template:
     metadata:
       labels:
-        app: preprocess
+        app: preprocess-deployment
     spec:
       containers:
-      - name: preprocess-container
-        image: adamrusai/preprocess:latest # Ensure this matches your Docker Hub image
+      - name: preprocess-deployment
+        image: adamrusai/preprocess:latest  # Ensure this matches your Docker Hub image
         ports:
         - containerPort: 5000
-        volumeMounts:
-        - name: raw-pv
-          mountPath: "/mnt/dataset"
         env:
-        - name: PROCESSED_DIR
-          value: '/app/preprocess_dataset'
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: AWS_SECRET_ACCESS_KEY
+        - name: S3_BUCKET
+          value: "my-emotions-data-bucket"
         resources:
           requests:
             memory: "1Gi"
-            cpu: "500m"
+            cpu: "200m"  # Reduced CPU request
           limits:
             memory: "2Gi"
-            cpu: "1"
-      volumes:
-      - name: raw-pv
-        persistentVolumeClaim:
-          claimName: raw-pvc
+            cpu: "500m"  # Reduced CPU limit
       restartPolicy: Always

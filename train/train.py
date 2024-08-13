@@ -1,20 +1,48 @@
 import os
 import pickle
 import pandas as pd
+import boto3
 import time
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn import svm
 from sklearn.model_selection import train_test_split
-from flask import Flask, request, jsonify
 
-app = Flask(__name__)
+# AWS S3 Configuration
+s3_bucket = os.getenv("S3_BUCKET")
+s3_client = boto3.client('s3')
 
-# Define directory to save model (EDIT THIS PLEASE)
-#save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = "/app/processed_train/model.pkl" #os.path.join(save_dir, 'model.pkl')
+def download_from_s3(bucket_name, object_name, file_name):
+    try:
+        print(f"Downloading {object_name} from S3 bucket {bucket_name}")
+        s3_client.download_file(bucket_name, object_name, file_name)
+        print(f"Successfully downloaded {object_name} to {file_name}")
+    except Exception as e:
+        print(f"Failed to download {object_name} from S3: {e}")
+
+def upload_to_s3(bucket_name, file_name, object_name=None):
+    try:
+        if object_name is None:
+            object_name = os.path.basename(file_name)
+        print(f"Uploading {file_name} to S3 bucket {bucket_name} as {object_name}")
+        s3_client.upload_file(file_name, bucket_name, object_name)
+        print(f"Successfully uploaded {file_name} as {object_name}")
+    except Exception as e:
+        print(f"Failed to upload {file_name} to S3: {e}")
+
+# Define paths
+model_path = "/tmp/model.pkl"
+local_preprocessed_data = "/tmp/processed_emotions.csv"
+local_validation_data = "/tmp/validation_data.csv"
+
+# Download preprocessed data from S3
+download_from_s3(s3_bucket, "processed_emotions.csv", local_preprocessed_data)
+
+# Ensure the file exists before proceeding
+if not os.path.exists(local_preprocessed_data):
+    raise FileNotFoundError(f"{local_preprocessed_data} not found!")
 
 # Load dataset
-df_reduced_model = pd.read_csv('/app/processed_train/preprocessed_data.csv')
+df_reduced_model = pd.read_csv(local_preprocessed_data)
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -34,17 +62,9 @@ X_test, X_val, y_test, y_val = train_test_split(
     stratify=y_temp
 )
 
-# Assuming X_val is a DataFrame or a NumPy array
-if not isinstance(X_val, pd.DataFrame):
-    X_val = pd.DataFrame(X_val)
-
-if not isinstance(y_val, pd.Series):
-    y_val = pd.Series(y_val, name='label')
-
-# Concatenate X_val and y_val along the columns
+# Save validation data to CSV
 val_data = pd.concat([X_val, y_val], axis=1)
-# Save the combined DataFrame to a CSV file
-val_data.to_csv('/app/processed_train/validation_data.csv')
+val_data.to_csv(local_validation_data, index=False)
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -59,27 +79,23 @@ def predict(model_path, X):
         SVM_model = pickle.load(f)
     return SVM_model.predict(X)
 
-# @app.route('/train', methods=['POST'])
 def train():
-    """Endpoint to train the model."""
+    """Train the model and upload the model to S3."""
     train_model(X_train, y_train, model_path)
-    return jsonify({"message": "Model trained and saved!"})
+    upload_to_s3(s3_bucket, model_path, "model.pkl")
+    upload_to_s3(s3_bucket, local_validation_data, "validation_data.csv")
 
-# @app.route('/test-predict', methods=['POST'])
 def test_predict():
-    """Endpoint to predict on test set."""
+    """Predict on test set."""
     y_test_pred = predict(model_path, X_test)
 
-    # Reverse mapping to decode the predictions and original test values
     reverse_mapping = {2: 'POSITIVE', 1: 'NEUTRAL', 0: 'NEGATIVE'}
     y_test_pred_decoded = [reverse_mapping[label] for label in y_test_pred]
     y_test_decoded = [reverse_mapping[label] for label in y_test]
 
     test_accuracy = (y_test_pred == y_test).sum() / len(y_test)
-
-    print("Test predictions made!")
-    print("Test accuracy:" + test_accuracy)
-    print("Classification report: "+ classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True))
+    print(f"Test accuracy: {test_accuracy}")
+    print(f"Classification report: {classification_report(y_test_decoded, y_test_pred_decoded)}")
 
     while True:
         time.sleep(100)
@@ -87,4 +103,3 @@ def test_predict():
 if __name__ == "__main__":
     train()
     test_predict()
-    app.run(host='0.0.0.0', port=5000)
