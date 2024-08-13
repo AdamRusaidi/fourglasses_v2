@@ -27,9 +27,9 @@ spec:
         # - name: SAVE_DIR
         #   value: /app_data  # Adjust as needed for your app
         volumeMounts:
-        - name: shared-storage
-          mountPath: "/data"
+        - name: shared-pv
+          mountPath: "/mnt/app/data"
       volumes:
-      - name: shared-storage
+      - name: shared-pv
         persistentVolumeClaim:
           claimName: shared-pvc 

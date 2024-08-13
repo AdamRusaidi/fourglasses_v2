@@ -9,7 +9,7 @@ from xgboost import XGBClassifier
 # @app.route('/preprocess', methods=['POST'])
 def preprocess():
     # Load data from the raw_data folder
-    df = pd.read_csv("/data/emotions.csv")
+    df = pd.read_csv("/app/data/emotions.csv")
     print(df.head())
     print('Read data successfully')
 
@@ -53,11 +53,11 @@ def preprocess():
     os.makedirs('/data', exist_ok=True)
 
     # Save preprocessed data
-    df_reduced_model.to_csv('/data/preprocessed_data.csv')
+    df_reduced_model.to_csv('/app/data/preprocessed_data.csv')
 
-    print('Preprocessing complete, data saved to /data/preprocessed_data.csv')
+    print('Preprocessing complete, data saved to /app/data/preprocessed_data.csv')
 
-    test = pd.read_csv("/data/preprocessed_data.csv")
+    test = pd.read_csv("/app/data/preprocessed_data.csv")
     print(test.head())
 
 if __name__ == "__main__":

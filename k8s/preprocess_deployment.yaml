@@ -24,10 +24,17 @@ spec:
         ports:
         - containerPort: 5000
         volumeMounts:
-        - name: shared-storage
-          mountPath: "/data"
+        - name: shared-pv
+          mountPath: "/mnt/app/data"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
       volumes:
-      - name: shared-storage
+      - name: shared-pv
         persistentVolumeClaim:
           claimName: shared-pvc
       restartPolicy: Always

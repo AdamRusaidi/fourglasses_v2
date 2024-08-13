@@ -5,15 +5,17 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY train/train.py /app/
-# COPY data/preprocessed_data.csv /data/
-COPY train/train_requirements.txt /app/
+COPY . .
+
+# COPY train/train.py /app/
+# # COPY data/preprocessed_data.csv /data/
+# COPY train/train_requirements.txt /app/
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r train_requirements.txt
+RUN pip install --no-cache-dir -r train/train_requirements.txt
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "train.py"]
+CMD ["python", "/app/train/train.py"]
