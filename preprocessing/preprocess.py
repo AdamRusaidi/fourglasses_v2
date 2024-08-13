@@ -10,6 +10,8 @@ from xgboost import XGBClassifier
 def preprocess():
     # Load data from the raw_data folder
     df = pd.read_csv("/data/emotions.csv")
+    print(df.head())
+    print('Read data successfully')
 
     # Preprocess data
     df = df.dropna()
@@ -54,6 +56,9 @@ def preprocess():
     df_reduced_model.to_csv('/data/preprocessed_data.csv')
 
     print('Preprocessing complete, data saved to /data/preprocessed_data.csv')
+
+    test = pd.read_csv("/data/preprocessed_data.csv")
+    print(test.head())
 
 if __name__ == "__main__":
     preprocess()
