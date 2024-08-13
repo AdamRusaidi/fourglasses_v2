@@ -5,9 +5,9 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY train.py /app/
+COPY train/train.py /app/
 COPY data/preprocessed_data.csv /data/
-COPY train_requirements.txt /app/
+COPY train/train_requirements.txt /app/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r train_requirements.txt

@@ -28,7 +28,7 @@ spec:
         #   value: /app_data  # Adjust as needed for your app
         volumeMounts:
         - name: shared-storage
-          mountPath: /data
+          mountPath: "/data"
       volumes:
       - name: shared-storage
         persistentVolumeClaim:
