@@ -4,9 +4,9 @@ import pandas as pd
 from flask import Flask, jsonify
 from xgboost import XGBClassifier
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-@app.route('/preprocess', methods=['POST'])
+# @app.route('/preprocess', methods=['POST'])
 def preprocess():
     # Load data from the raw_data folder
     df = pd.read_csv("/data/emotions.csv")
@@ -53,17 +53,7 @@ def preprocess():
     # Save preprocessed data
     df_reduced_model.to_csv('/data/preprocessed_data.csv')
 
-    return jsonify({"message": "Preprocessing complete, data saved to ./app_data/preprocessed_data.csv"})
-
-    selected_features_str = ', '.join(selected_features)
-
-    selected_features_amt = len(selected_features)
-
-    return jsonify({
-        "message": "These are the selected features based on importance > 0.01",
-        "select_features_amt": selected_features_amt,
-        "selected_features": selected_features_str
-    })
+    print('Preprocessing complete, data saved to /data/preprocessed_data.csv')
 
 if __name__ == "__main__":
     preprocess()
