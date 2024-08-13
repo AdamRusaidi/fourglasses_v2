@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY . .
+COPY ../data/emotions.csv /app/dataset/
 # COPY preprocessing/preprocess.py /app/
 # COPY data/emotions.csv /data/
 # COPY preprocessing/preprocess_requirements.txt /app/

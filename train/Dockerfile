@@ -1,3 +1,5 @@
+FROM adamrusai/preprocess:latest as preprocess-stage
+
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
@@ -5,8 +7,9 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . .
-
+COPY --from-preprocess-stage /app/dataset /app/processed_train
+COPY . /app
+# COPY /app/data/preprocessed_data.csv /app/data/
 # COPY train/train.py /app/
 # # COPY data/preprocessed_data.csv /data/
 # COPY train/train_requirements.txt /app/

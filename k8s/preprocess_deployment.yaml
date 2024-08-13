@@ -26,6 +26,9 @@ spec:
         volumeMounts:
         - name: shared-pv
           mountPath: "/mnt/app/data"
+        env:
+        - name: PROCESSED_DIR
+          value: '/app/dataset'
         resources:
           requests:
             memory: "1Gi"
