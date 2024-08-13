@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY train.py /app/
+COPY data/preprocessed_data.csv /data/
 COPY train_requirements.txt /app/
 
 # Install any needed packages specified in requirements.txt

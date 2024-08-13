@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY preprocessing.py /app/
+COPY data/emotions.csv /data/
 COPY preprocess_requirements.txt /app/
 
 # Install any needed packages specified in preprocess_requirements.txt
