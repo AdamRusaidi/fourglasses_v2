@@ -1,6 +1,7 @@
 import os
 import pickle
 import pandas as pd
+import time
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn import svm
 from sklearn.model_selection import train_test_split
@@ -10,10 +11,10 @@ from flask import Flask, request, jsonify
 
 # Define directory to save model (EDIT THIS PLEASE)
 #save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = "/app/data/model.pkl" #os.path.join(save_dir, 'model.pkl')
+model_path = "/app/processed_train/model.pkl" #os.path.join(save_dir, 'model.pkl')
 
 # Load dataset
-df_reduced_model = pd.read_csv('/app/data/preprocessed_data.csv')
+df_reduced_model = pd.read_csv('/app/processed_train/preprocessed_data.csv')
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -43,7 +44,7 @@ if not isinstance(y_val, pd.Series):
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/app/data/validation_data.csv')
+val_data.to_csv('/app/processed_train/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -79,6 +80,9 @@ def test_predict():
     print("Test predictions made!")
     print("Test accuracy:" + test_accuracy)
     print("Classification report: "+ classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True))
+
+    while True:
+        time.sleep(100)
 
 if __name__ == "__main__":
     train()
