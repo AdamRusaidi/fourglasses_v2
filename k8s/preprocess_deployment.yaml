@@ -20,29 +20,10 @@ spec:
     spec:
       containers:
       - name: preprocess-container
-        image: adamrusai/preprocess:latest # Ensure this matches your Docker Hub image
-        # ports:
-        # - containerPort: 5000
+        image: adamrusai/preprocess:latest
         volumeMounts:
         - name: data-vol
           mountPath: "/mnt"
-        # env:
-        # - name: PROCESSED_DIR
-        #   value: '/app/preprocess_dataset'
-      # - name: training-container
-      #   image: adamrusai/train:latest
-      #   ports:
-        # - containerPort: 5000
-        volumeMounts:
-        - name: data-vol
-          mountPath: "/mnt"
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "1"
       volumes:
       - name: data-vol
         persistentVolumeClaim:

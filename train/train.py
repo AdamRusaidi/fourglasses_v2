@@ -2,27 +2,26 @@ import os
 import pickle
 import pandas as pd
 import time
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import classification_report
 from sklearn import svm
 from sklearn.model_selection import train_test_split
-from flask import Flask, request, jsonify
 
-# app = Flask(__name__)
 model_dir = '/mnt/model'
+
+# saving model path
 if not os.path.exists(model_dir):
     os.makedirs(model_dir, exist_ok=True)
+
+#saving validation path
 validation_dir = '/mnt/validation'
 if not os.path.exists(validation_dir):
     os.makedirs(validation_dir, exist_ok=True)
-# Define directory to save model (EDIT THIS PLEASE)
-#save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = "/mnt/model/model.pkl" #os.path.join(save_dir, 'model.pkl')
+
+# Define directory to save model
+model_path = "/mnt/model/model.pkl"
 
 # Load dataset
 df_reduced_model = pd.read_csv('/mnt/preprocessed/preprocessed_data.csv')
-# os.chdir('/app')
-# with open('/mnt/dataset/preprocessed_data.csv', 'r') as file:
-#     df_reduced_model = file.read()
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -51,11 +50,8 @@ if not isinstance(y_val, pd.Series):
 
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
-# Save the combined DataFrame to a CSV file
-# val_data.to_csv('/mnt/dataset/validation_data.csv')
-# with open('/mnt/validation/validation_data.csv', 'w') as file:
-#     file.write(val_data)
 
+# Save the combined DataFrame to a CSV file
 val_data.to_csv('/mnt/validation/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
@@ -71,13 +67,10 @@ def predict(model_path, X):
         SVM_model = pickle.load(f)
     return SVM_model.predict(X)
 
-# @app.route('/train', methods=['POST'])
 def train():
     """Endpoint to train the model."""
     train_model(X_train, y_train, model_path)
-    # return jsonify({"message": "Model trained and saved!"})
 
-# @app.route('/test-predict', methods=['POST'])
 def test_predict():
     """Endpoint to predict on test set."""
     y_test_pred = predict(model_path, X_test)
@@ -98,8 +91,3 @@ def test_predict():
 
 train()
 test_predict()
-
-# if __name__ == "__main__":
-#     train()
-#     test_predict()
-#     app.run(host='0.0.0.0', port=5000)
