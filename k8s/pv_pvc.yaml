@@ -2,16 +2,17 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: raw-pv
+  name: data-pv
   labels:
-    type: raw-storage
+    type: data-storage
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteMany
+  storageClassName: manual
   hostPath:
-    path: "/mnt/dataset"
+    path: "/mnt"
 
 ---
 
@@ -19,45 +20,45 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: raw-pvc
+  name: data-pvc
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
-  storageClassName: ""
-  volumeName: raw-pv
+  storageClassName: manual
+  volumeName: data-pv
 
----
+# ---
 
-# preprocessed_pv.yaml
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: preprocess-pv
-  labels:
-    type: preprocess-storage
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: "/app/preprocess_dataset"
+# # preprocessed_pv.yaml
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: preprocess-pv
+#   labels:
+#     type: preprocess-storage
+# spec:
+#   capacity:
+#     storage: 1Gi
+#   accessModes:
+#     - ReadWriteMany
+#   hostPath:
+#     path: "/app/preprocess_dataset"
 
----
+# ---
 
-# preprocessed_pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: preprocess-pvc
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: ""
-  volumeName: preprocess-pv
+# # preprocessed_pvc.yaml
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: preprocess-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 1Gi
+#   storageClassName: ""
+#   volumeName: preprocess-pv

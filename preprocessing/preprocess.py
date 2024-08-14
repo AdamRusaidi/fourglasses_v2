@@ -10,7 +10,10 @@ app = Flask(__name__)
 # @app.route('/preprocess', methods=['POST'])
 def preprocess():
     # Load data from the raw_data folder
-    df = pd.read_csv("/mnt/dataset/emotions.csv")
+    # os.chdir('/app')
+    # with open('/app/dataset/emotions.csv', 'r') as file:
+    #     df = file.read()
+    df = pd.read_csv("/app/dataset/emotions.csv")
     print(df.head())
     print('Read data successfully')
 
@@ -54,12 +57,15 @@ def preprocess():
     # os.makedirs('/data', exist_ok=True)
 
     # Save preprocessed data
-    df_reduced_model.to_csv('/app/preprocess_dataset/preprocessed_data.csv')
+    # df_reduced_model.to_csv('/mnt/dataset/preprocessed_data.csv')
+    # with open('/mnt/dataset/preprocessed_data.csv', 'w') as file:
+    #     file.write(df_reduced_model)
+    df_reduced_model.to_csv('/mnt/preprocessed/preprocessed_data.csv')
 
-    print('Preprocessing complete, data saved to /app/preprocess_dataset/preprocessed_data.csv')
+    print('Preprocessing complete, data saved to /mnt/preprocessed/preprocessed_data.csv')
 
-    test = pd.read_csv("/app/preprocess_dataset/preprocessed_data.csv")
-    print(test.head())
+    # test = pd.read_csv("/mnt/preprocessed/preprocessed_data.csv")
+    # print(test.head())
 
     while True:
         time.sleep(100)

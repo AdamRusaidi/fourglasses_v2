@@ -11,10 +11,13 @@ app = Flask(__name__)
 
 # Define directory to save model (EDIT THIS PLEASE)
 #save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = "/app/processed_train/model.pkl" #os.path.join(save_dir, 'model.pkl')
+model_path = "/mnt/model/model.pkl" #os.path.join(save_dir, 'model.pkl')
 
 # Load dataset
-df_reduced_model = pd.read_csv('/app/processed_train/preprocessed_data.csv')
+df_reduced_model = pd.read_csv('/mnt/preprocessed/preprocessed_data.csv')
+# os.chdir('/app')
+# with open('/mnt/dataset/preprocessed_data.csv', 'r') as file:
+#     df_reduced_model = file.read()
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -44,7 +47,9 @@ if not isinstance(y_val, pd.Series):
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/app/processed_train/validation_data.csv')
+# val_data.to_csv('/mnt/dataset/validation_data.csv')
+with open('/mnt/validation/validation_data.csv', 'w') as file:
+    file.write(val_data)
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
