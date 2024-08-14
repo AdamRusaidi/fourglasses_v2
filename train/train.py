@@ -8,7 +8,12 @@ from sklearn.model_selection import train_test_split
 from flask import Flask, request, jsonify
 
 # app = Flask(__name__)
-
+model_dir = '/mnt/model'
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir, exist_ok=True)
+validation_dir = '/mnt/validation'
+if not os.path.exists(validation_dir):
+    os.makedirs(validation_dir, exist_ok=True)
 # Define directory to save model (EDIT THIS PLEASE)
 #save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
 model_path = "/mnt/model/model.pkl" #os.path.join(save_dir, 'model.pkl')
@@ -48,8 +53,10 @@ if not isinstance(y_val, pd.Series):
 val_data = pd.concat([X_val, y_val], axis=1)
 # Save the combined DataFrame to a CSV file
 # val_data.to_csv('/mnt/dataset/validation_data.csv')
-with open('/mnt/validation/validation_data.csv', 'w') as file:
-    file.write(val_data)
+# with open('/mnt/validation/validation_data.csv', 'w') as file:
+#     file.write(val_data)
+
+val_data.to_csv('/mnt/validation/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -68,7 +75,7 @@ def predict(model_path, X):
 def train():
     """Endpoint to train the model."""
     train_model(X_train, y_train, model_path)
-    return jsonify({"message": "Model trained and saved!"})
+    # return jsonify({"message": "Model trained and saved!"})
 
 # @app.route('/test-predict', methods=['POST'])
 def test_predict():
@@ -83,8 +90,8 @@ def test_predict():
     test_accuracy = (y_test_pred == y_test).sum() / len(y_test)
 
     print("Test predictions made!")
-    print("Test accuracy:" + test_accuracy)
-    print("Classification report: "+ classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True))
+    print("Test accuracy: {}".format(test_accuracy))
+    print("Classification report: {}".format(classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True)))
 
     while True:
         time.sleep(100)
