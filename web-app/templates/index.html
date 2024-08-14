@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .card {
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:disabled {
+            background-color: #007bff99;
+            cursor: not-allowed;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .prediction {
+            font-size: 36px;
+            margin-top: 20px;
+        }
+        .positive {
+            color: green;
+        }
+        .neutral {
+            color: orange;
+        }
+        .negative {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Emotion Prediction</h1>
+            <div>
+                <button id="start-btn" class="btn btn-primary">Start</button>
+                <button id="pause-btn" class="btn btn-warning" disabled>Pause</button>
+                <button id="reset-btn" class="btn btn-danger">Reset</button>
+            </div>
+            <h2>Predictions:</h2>
+            <h3 id="prediction-text" class="prediction"></h3>
+        </div>
+    </div>
+
+    <script>
+        let predictions = [];
+        let index = 0;
+        let intervalId = null;
+        const predictionText = document.getElementById('prediction-text');
+
+        document.getElementById('start-btn').addEventListener('click', startPrediction);
+        document.getElementById('pause-btn').addEventListener('click', pausePrediction);
+        document.getElementById('reset-btn').addEventListener('click', resetPrediction);
+
+        async function fetchPredictions() {
+            try {
+                const response = await fetch('/predictions'); // Adjust the URL as needed
+                predictions = await response.json();
+                startDisplayingPredictions();
+            } catch (error) {
+                console.error('Error fetching predictions:', error);
+            }
+        }
+
+        function startDisplayingPredictions() {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(() => {
+                const currentPrediction = getPredictionLabel(predictions[index]);
+                predictionText.textContent = currentPrediction;
+                predictionText.className = `prediction ${getPredictionClass(currentPrediction)}`;
+                index = (index + 1) % predictions.length;
+            }, 1000);
+        }
+
+        function startPrediction() {
+            if (predictions.length === 0) {
+                fetchPredictions();
+            } else {
+                startDisplayingPredictions();
+            }
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('pause-btn').disabled = false;
+        }
+
+        function pausePrediction() {
+            clearInterval(intervalId);
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+        }
+
+        function resetPrediction() {
+            clearInterval(intervalId);
+            index = 0;
+            predictions = [];
+            predictionText.textContent = '';
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+        }
+
+        function getPredictionLabel(prediction) {
+            if (prediction === 2) return 'POSITIVE';
+            if (prediction === 1) return 'NEUTRAL';
+            if (prediction === 0) return 'NEGATIVE';
+            return ''; // Default case
+        }
+
+        function getPredictionClass(prediction) {
+            if (prediction === 'POSITIVE') return 'positive';
+            if (prediction === 'NEUTRAL') return 'neutral';
+            if (prediction === 'NEGATIVE') return 'negative';
+            return ''; // Default case
+        }
+    </script>
+</body>
+</html>

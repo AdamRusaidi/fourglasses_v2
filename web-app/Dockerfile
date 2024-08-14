@@ -1,22 +1,21 @@
-# Use an official Python runtime as a parent image
+# Use a Python image to set up the backend
 FROM python:3.9-slim
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY backend/website.py .
-COPY src/PredictionApp.js .
-COPY . /app
-
-# Install any needed packages specified in preprocess_requirements.txt
+# Copy the web requirements file and install Python dependencies
+COPY web_requirements.txt ./
 RUN pip install --no-cache-dir -r web_requirements.txt
 
-# Make port 5000 available to the world outside this container
-EXPOSE 5000
+# Copy the backend code and the HTML template
+COPY app.py ./
+COPY templates/ ./templates/
 
-# Run the application
-# CMD ["python", "/backend/website.py"]
-# CMD ["node", "/src/PredictionApp.js"]
-CMD ["sh", "-c", "node /src/PredictionApp.js && python /backend/website.py"] 
-# not sure if this works, but it runs predictionsapp then website
+# Expose the port your application runs on
+EXPOSE 80
+
+#Define env variable
+ENV FLASK_APP=app.py
+
+# Run the backend application
+CMD ["python", "app.py"]

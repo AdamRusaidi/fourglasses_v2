@@ -21,7 +21,9 @@ spec:
     spec:
       containers:
       - name: website-container
-        image: adamrusai/website:latest 
+        image: adamrusai/website:latest
+        ports:
+        - containerPort: 80
         volumeMounts:
         - name: data-vol
           mountPath: "/mnt"
