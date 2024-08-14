@@ -1,15 +1,18 @@
 import os
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify
+import time
 from xgboost import XGBClassifier
 
-app = Flask(__name__)
 
-@app.route('/preprocess', methods=['POST'])
 def preprocess():
-    # Load data from the raw_data folder
-    df = pd.read_csv("/mnt/data/emotions.csv")
+    output_dir = '/mnt/preprocessed'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+
+    df = pd.read_csv("/app/dataset/emotions.csv")
+    print(df.head())
+    print('Read data successfully')
 
     # Preprocess data
     df = df.dropna()
@@ -46,24 +49,11 @@ def preprocess():
 
     # Create a new DataFrame with the selected features
     df_reduced_model = df[selected_features + ['label']]
+    df_reduced_model.to_csv(f'{output_dir}/preprocessed_data.csv')
 
-    # Ensure the directory exists
-    os.makedirs('/mnt/data', exist_ok=True)
+    print('Preprocessing complete, data saved to /mnt/preprocessed/preprocessed_data.csv')
 
-    # Save preprocessed data
-    df_reduced_model.to_csv('/mnt/data/preprocessed_data.csv')
+    while True:
+        time.sleep(100)
 
-    return jsonify({"message": "Preprocessing complete, data saved to ./app_data/preprocessed_data.csv"})
-
-    selected_features_str = ', '.join(selected_features)
-
-    selected_features_amt = len(selected_features)
-
-    return jsonify({
-        "message": "These are the selected features based on importance > 0.01",
-        "select_features_amt": selected_features_amt,
-        "selected_features": selected_features_str
-    })
-
-if __name__ == "__main__":
-    preprocess()
+preprocess()

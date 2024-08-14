@@ -1,19 +1,26 @@
 import os
 import pickle
 import pandas as pd
-from sklearn.metrics import accuracy_score, classification_report
+import time
+from sklearn.metrics import classification_report
 from sklearn import svm
 from sklearn.model_selection import train_test_split
-from flask import Flask, request, jsonify
 
-app = Flask(__name__)
+# saving model path
+model_dir = '/mnt/model'
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir, exist_ok=True)
 
-# Define directory to save model (EDIT THIS PLEASE)
-save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = os.path.join(save_dir, 'model.pkl')
+#saving validation path
+validation_dir = '/mnt/validation'
+if not os.path.exists(validation_dir):
+    os.makedirs(validation_dir, exist_ok=True)
+
+# Define directory to save model
+model_path = "/mnt/model/model.pkl"
 
 # Load dataset
-df_reduced_model = pd.read_csv('/mnt/data/preprocessed_data.csv')
+df_reduced_model = pd.read_csv('/mnt/preprocessed/preprocessed_data.csv')
 
 # Split the data into 80% training and 20% temporary
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -42,8 +49,9 @@ if not isinstance(y_val, pd.Series):
 
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
+
 # Save the combined DataFrame to a CSV file
-val_data.to_csv('/fourglasses/app_data/validation_data.csv')
+val_data.to_csv('/mnt/validation/validation_data.csv')
 
 def train_model(X_train, y_train, model_path):
     """Train the SVM model and save it."""
@@ -58,13 +66,10 @@ def predict(model_path, X):
         SVM_model = pickle.load(f)
     return SVM_model.predict(X)
 
-@app.route('/train', methods=['POST'])
 def train():
     """Endpoint to train the model."""
     train_model(X_train, y_train, model_path)
-    return jsonify({"message": "Model trained and saved!"})
 
-@app.route('/test-predict', methods=['POST'])
 def test_predict():
     """Endpoint to predict on test set."""
     y_test_pred = predict(model_path, X_test)
@@ -75,11 +80,13 @@ def test_predict():
     y_test_decoded = [reverse_mapping[label] for label in y_test]
 
     test_accuracy = (y_test_pred == y_test).sum() / len(y_test)
-    return jsonify({
-        "message": "Test predictions made!",
-        "test_accuracy": test_accuracy,
-        "classification_report": classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True)
-    })
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    print("Test predictions made!")
+    print("Test accuracy: {}".format(test_accuracy))
+    print("Classification report: {}".format(classification_report(y_test_decoded, y_test_pred_decoded, output_dict=True)))
+
+    while True:
+        time.sleep(100)
+
+train()
+test_predict()

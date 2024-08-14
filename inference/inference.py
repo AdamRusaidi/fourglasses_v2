@@ -1,12 +1,15 @@
 import os
 import pickle
+import time
 import pandas as pd
 
-# Define directories for model and data
-save_dir = os.getenv("SAVE_DIR", "/fourglasses/app_data")
-model_path = os.path.join(save_dir, 'model.pkl')
-new_data_path = os.path.join(save_dir, 'validation_predictions.csv')
-predictions_path = os.path.join(save_dir, 'prediction_outputs.csv')
+# Define all directories and file paths needed
+predictions_dir = '/mnt/predictions'
+if not os.path.exists(predictions_dir):
+    os.makedirs(predictions_dir, exist_ok=True)
+predictions_path = '/mnt/predictions/predictions.csv'
+model_path = '/mnt/model/model.pkl'
+data_path = '/mnt/validation/validation_data.csv'
 
 def load_model(model_path):
     """Load the saved model from the specified path."""
@@ -30,18 +33,18 @@ def main():
     try:
         # Load the model
         model = load_model(model_path)
-        print(f"Model loaded from {model_path}")
+        print(f"Model loaded from {model_path}.")
 
-        # Load new data
-        df_new_data = load_data(new_data_path)
-        print(f"Data loaded from {new_data_path}")
+        # Load validation dataset
+        df_new_data = load_data(data_path)
+        print(f"Data loaded from {data_path}.")
 
-        # Ensure the feature columns match the model's training data
+        # Get feature columns
         X_new = df_new_data.drop(columns=["label"], errors='ignore')
 
         # Make predictions
         predictions = make_predictions(model, X_new)
-        print("Predictions made")
+        print("Predictions made.")
 
         # Save predictions
         save_predictions(predictions, predictions_path)
@@ -50,5 +53,8 @@ def main():
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
-if __name__ == "__main__":
-    main()
+    while True:
+            time.sleep(100)
+
+# Run the code
+main()
