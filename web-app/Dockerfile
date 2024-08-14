@@ -5,8 +5,8 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY website.py .
-COPY PredictionApp.js .
+COPY backend/website.py .
+COPY src/PredictionApp.js .
 COPY . /app
 
 # Install any needed packages specified in preprocess_requirements.txt
