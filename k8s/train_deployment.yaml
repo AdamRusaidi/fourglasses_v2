@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: train
+  revisionHistoryLimit: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -28,4 +29,4 @@ spec:
       - name: data-vol
         persistentVolumeClaim:
           claimName: data-pvc
-      restartPolicy: Always
+      restartPolicy: Always

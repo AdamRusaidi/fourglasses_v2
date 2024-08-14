@@ -1,5 +1,6 @@
 import os
 import pickle
+import time
 import pandas as pd
 
 # Define all directories and file paths needed
@@ -51,6 +52,9 @@ def main():
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+
+    while True:
+            time.sleep(100)
 
 # Run the code
 main()
