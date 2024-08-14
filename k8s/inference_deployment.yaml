@@ -1,0 +1,32 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: inference
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: inference
+    spec:
+      containers:
+      - name: inference-container
+        image: adamrusai/inference:latest
+        volumeMounts:
+        - name: data-vol
+          mountPath: "/mnt"
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: data-pvc
+      restartPolicy: Always

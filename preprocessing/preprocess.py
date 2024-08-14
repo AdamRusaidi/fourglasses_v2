@@ -1,15 +1,18 @@
 import os
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify
-from sklearn.ensemble import RandomForestClassifier
+import time
+from xgboost import XGBClassifier
 
-app = Flask(__name__)
 
-@app.route('/preprocess', methods=['POST'])
 def preprocess():
-    # Load data from the raw_data folder
-    df = pd.read_csv("./raw_data/emotions.csv")
+    output_dir = '/mnt/preprocessed'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+
+    df = pd.read_csv("/app/dataset/emotions.csv")
+    print(df.head())
+    print('Read data successfully')
 
     # Preprocess data
     df = df.dropna()
@@ -21,26 +24,36 @@ def preprocess():
     to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > 0.8)]
     df = df.drop(columns=to_drop)
 
-    # Feature selection with RandomForest
-    X = df.drop(columns="label")
-    y = df["label"]
-    clf = RandomForestClassifier()
-    clf.fit(X, y)
-    feature_importance = clf.feature_importances_
-    selected_features = X.columns[feature_importance > 0.0148]
+    # Train a model and use its feature importance to select the most informative features.
+    X = df.drop(columns=['label'])
+    y = df['label']
 
-    # Reduced dataset
-    df_reduced_model = df[selected_features].copy()
-    df_reduced_model["label"] = y
+    # Train the model
+    xgb = XGBClassifier()
+    xgb.fit(X, y)
 
-    # Ensure the directory exists
-    os.makedirs('../app_data', exist_ok=True)
+    # Get feature importances
+    feature_importance = xgb.feature_importances_
 
-    # Save preprocessed data
-    df_reduced_model.to_csv('../app_data/preprocessed_data.csv')
+    # Create a DataFrame to hold feature names and their importance
+    importance_df = pd.DataFrame({
+        'Feature': X.columns,
+        'Importance': feature_importance
+    })
 
-    return jsonify({"message": "Preprocessing complete, data saved to ../app_data/preprocessed_data.csv"})
+    # Sort the features by importance in descending order
+    importance_df = importance_df.sort_values(by='Importance', ascending=False)
 
+    # Select features with importance above 0.01
+    selected_features = importance_df[importance_df['Importance'] > 0.01]['Feature'].tolist()
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    # Create a new DataFrame with the selected features
+    df_reduced_model = df[selected_features + ['label']]
+    df_reduced_model.to_csv(f'{output_dir}/preprocessed_data.csv')
+
+    print('Preprocessing complete, data saved to /mnt/preprocessed/preprocessed_data.csv')
+
+    while True:
+        time.sleep(100)
+
+preprocess()
