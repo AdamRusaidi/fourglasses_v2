@@ -21,7 +21,7 @@ spec:
       containers:
       - name: preprocess-container
         image: adamrusai/preprocess:latest # Ensure this matches your Docker Hub image
-        ports:
+        # ports:
         # - containerPort: 5000
         volumeMounts:
         - name: data-vol
@@ -29,9 +29,9 @@ spec:
         # env:
         # - name: PROCESSED_DIR
         #   value: '/app/preprocess_dataset'
-      - name: training-container
-        image: adamrusai/train:latest
-        ports:
+      # - name: training-container
+      #   image: adamrusai/train:latest
+      #   ports:
         # - containerPort: 5000
         volumeMounts:
         - name: data-vol

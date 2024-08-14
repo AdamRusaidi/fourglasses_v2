@@ -5,7 +5,7 @@ import time
 from flask import Flask, jsonify
 from xgboost import XGBClassifier
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 # @app.route('/preprocess', methods=['POST'])
 def preprocess():
@@ -13,6 +13,10 @@ def preprocess():
     # os.chdir('/app')
     # with open('/app/dataset/emotions.csv', 'r') as file:
     #     df = file.read()
+    output_dir = '/mnt/preprocessed'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+
     df = pd.read_csv("/app/dataset/emotions.csv")
     print(df.head())
     print('Read data successfully')
@@ -60,7 +64,8 @@ def preprocess():
     # df_reduced_model.to_csv('/mnt/dataset/preprocessed_data.csv')
     # with open('/mnt/dataset/preprocessed_data.csv', 'w') as file:
     #     file.write(df_reduced_model)
-    df_reduced_model.to_csv('/mnt/preprocessed/preprocessed_data.csv')
+
+    df_reduced_model.to_csv(f'{output_dir}/preprocessed_data.csv')
 
     print('Preprocessing complete, data saved to /mnt/preprocessed/preprocessed_data.csv')
 
@@ -70,6 +75,9 @@ def preprocess():
     while True:
         time.sleep(100)
 
-if __name__ == "__main__":
-    preprocess()
-    app.run(host='0.0.0.0', port=5000)
+
+preprocess()
+
+# if __name__ == "__main__":
+#     preprocess()
+#     app.run(host='0.0.0.0', port=5000)

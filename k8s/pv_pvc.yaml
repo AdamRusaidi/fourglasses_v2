@@ -10,7 +10,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteMany
-  storageClassName: manual
+  storageClassName: standard
   hostPath:
     path: "/mnt"
 
@@ -27,7 +27,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: manual
+  storageClassName: standard
   volumeName: data-pv
 
 # ---
