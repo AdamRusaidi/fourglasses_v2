@@ -27,4 +27,5 @@ spec:
       volumes:
       - name: data-vol
         persistentVolumeClaim:
-          claimName: data-pvc 
+          claimName: data-pvc
+      restartPolicy: Always

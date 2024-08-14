@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inference-deploy
+  name: inference-deployment
 spec:
-  replicas: 5
+  replicas: 3
   selector:
     matchLabels:
       app: inference
@@ -20,18 +20,13 @@ spec:
         app: inference
     spec:
       containers:
-      - name: inference-pod
-        image: adamrusai/model-inference:latest # Ensure this matches your Docker Hub image
-        ports:
-        - containerPort: 5000
-        env:
-        - name: SAVE_DIR
-          value: /app_data  # Adjust as needed for your app
+      - name: inference-container
+        image: adamrusai/inference:latest
         volumeMounts:
-        - name: model-storage
-          mountPath: /app_data
+        - name: data-vol
+          mountPath: "/mnt"
       volumes:
-      - name: train-storage
+      - name: data-vol
         persistentVolumeClaim:
-          claimName: train-pvc
+          claimName: data-pvc
       restartPolicy: Always

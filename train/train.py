@@ -6,9 +6,8 @@ from sklearn.metrics import classification_report
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 
-model_dir = '/mnt/model'
-
 # saving model path
+model_dir = '/mnt/model'
 if not os.path.exists(model_dir):
     os.makedirs(model_dir, exist_ok=True)
 
