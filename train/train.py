@@ -40,12 +40,12 @@ X_test, X_val, y_test, y_val = train_test_split(
     stratify=y_temp
 )
 
-# Assuming X_val is a DataFrame or a NumPy array
-if not isinstance(X_val, pd.DataFrame):
-    X_val = pd.DataFrame(X_val)
+# # Assuming X_val is a DataFrame or a NumPy array
+# if not isinstance(X_val, pd.DataFrame):
+#     X_val = pd.DataFrame(X_val)
 
-if not isinstance(y_val, pd.Series):
-    y_val = pd.Series(y_val, name='label')
+# if not isinstance(y_val, pd.Series):
+#     y_val = pd.Series(y_val, name='label')
 
 # Concatenate X_val and y_val along the columns
 val_data = pd.concat([X_val, y_val], axis=1)
