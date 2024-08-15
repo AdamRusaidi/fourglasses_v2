@@ -27,7 +27,7 @@ def make_predictions(model, X):
 def save_predictions(predictions, output_path):
     """Save the predictions to a CSV file."""
     predictions_df = pd.DataFrame(predictions, columns=['Predicted Label'])
-    predictions_df.to_csv(output_path, index=False)
+    predictions_df.to_csv(output_path)
 
 def main():
     try:
@@ -41,6 +41,7 @@ def main():
 
         # Get feature columns
         X_new = df_new_data.drop(columns=["label"], errors='ignore')
+        X_new = X_new.loc[:, ~X_new.columns.str.contains('^Unnamed: 0.1')]
 
         # Make predictions
         predictions = make_predictions(model, X_new)
@@ -54,7 +55,7 @@ def main():
         print(f"An error occurred: {str(e)}")
 
     while True:
-            time.sleep(100)
+        time.sleep(100)
 
 # Run the code
 main()
